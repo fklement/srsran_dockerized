@@ -1,0 +1,44 @@
+services:
+  gnb:
+    container_name: srsRAN_gnb
+    hostname: gnb
+    platform: linux/amd64
+    build:
+      dockerfile: Dockerfile
+    network_mode: "host"
+    # networks:
+    #   oran-sc-ric_ric_network:
+    #     ipv4_address: 10.0.2.100
+    #   docker_ran:
+    #   bridge:
+    # command: ./build/apps/gnb/gnb -c ../gnb_zmq.yaml
+
+  ue:
+    depends_on:
+      - gnb
+    container_name: srsRAN_ue
+    hostname: ue
+    privileged: true
+    platform: linux/amd64
+    build:
+      dockerfile: Dockerfile.ue
+    network_mode: "host"
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    # networks:
+    # docker_ran:
+    # bridge:
+    # command: ./start_ue.sh
+
+networks:
+  docker_ran:
+    external: true
+  oran-sc-ric_ric_network:
+    external: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.0.2.0/24
+
+  bridge:
+    driver: bridge

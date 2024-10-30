@@ -1,0 +1,27 @@
+FROM ubuntu:22.04
+
+RUN DEBIAN_FRONTEND=noninteractive
+RUN apt update
+RUN apt-get install -y \
+    build-essential cmake libfftw3-dev libmbedtls-dev libboost-program-options-dev libconfig++-dev libsctp-dev git iproute2 libzmq3-dev
+
+
+COPY . .
+RUN chmod +x ./start_ue.sh
+
+
+WORKDIR /
+
+RUN git clone https://github.com/srsRAN/srsRAN_4G.git
+WORKDIR /srsRAN_4G
+RUN mkdir build
+RUN cd build && cmake ../ && make
+RUN cd build && make install
+RUN cd build && srsran_install_configs.sh user
+# RUN cp ../ue_zmq.conf /config/srsran/ue_zmq.conf
+
+
+
+
+CMD sleep 1000000
+
