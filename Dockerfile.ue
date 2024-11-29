@@ -3,7 +3,7 @@ FROM ubuntu:22.04
 RUN DEBIAN_FRONTEND=noninteractive
 RUN apt update
 RUN apt-get install -y \
-    build-essential cmake libfftw3-dev libmbedtls-dev libboost-program-options-dev libconfig++-dev libsctp-dev git iproute2 libzmq3-dev
+    build-essential cmake libfftw3-dev libmbedtls-dev libboost-program-options-dev libconfig++-dev libsctp-dev git iproute2 libzmq3-dev iputils-ping
 
 
 COPY . .
@@ -20,7 +20,7 @@ RUN cd build && make install
 RUN cd build && srsran_install_configs.sh user
 # RUN cp ../ue_zmq.conf /config/srsran/ue_zmq.conf
 
-
+RUN ip netns add ue1
 
 
 CMD sleep 1000000
